@@ -1,0 +1,12 @@
+langchain~=0.3.24
+openai
+huggingface-hub  # only if you plan to use HF models
+pyyaml
+python-dotenv
+pytest
+transformers~=4.51.3
+accelerate  
+torch
+langchain-community~=0.3.22
+langchain-core~=0.3.56
+bitsandbytes~=0.42.0
