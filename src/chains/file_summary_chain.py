@@ -1,21 +1,11 @@
-from transformers import pipeline
-from langchain_huggingface import HuggingFacePipeline
 from langchain_core.prompts import PromptTemplate
 from langchain_core.runnables.base import RunnableSequence
+from langchain_huggingface import HuggingFacePipeline
 
 """
 Creates a runnable that summarizes a file's content.
 """
-def create_file_summary_chain():
-    hf_pipe = pipeline(
-        "text-generation",              # <-- causal LM needs text-generation
-        model="EleutherAI/pythia-2.8b",
-        trust_remote_code=True,
-        device_map="auto",
-        max_new_tokens=256
-    )
-    
-    llm = HuggingFacePipeline(pipeline=hf_pipe)
+def create_file_summary_chain(llm_pipeline: HuggingFacePipeline):
     prompt = PromptTemplate(
         input_variables=["filename", "file_content"],
         template=(
@@ -29,4 +19,4 @@ def create_file_summary_chain():
             "Summary:"
         )
     )
-    return RunnableSequence(prompt, llm)
+    return RunnableSequence(prompt, llm_pipeline)

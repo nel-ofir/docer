@@ -1,23 +1,12 @@
-from transformers import pipeline
-from langchain_huggingface import HuggingFacePipeline
 from langchain.chains import LLMChain
 from langchain_core.prompts import PromptTemplate
 from langchain_core.runnables.base import RunnableSequence
+from langchain_huggingface import HuggingFacePipeline
 
 """
 Creates a chain that stitches summaries and tech info into a final README.
 """
-def create_readme_generation_chain():
-    hf_pipe = pipeline(
-        "text-generation",              # <-- causal LM needs text-generation
-        model="EleutherAI/pythia-2.8b",
-        trust_remote_code=True,
-        device_map="auto",
-        max_new_tokens=256
-    )
-    
-    llm = HuggingFacePipeline(pipeline=hf_pipe)
-
+def create_readme_generation_chain(llm_pipeline: HuggingFacePipeline):
     template = PromptTemplate(
         input_variables=["project_name", "summaries", "technologies"],
         template=(
@@ -41,4 +30,4 @@ def create_readme_generation_chain():
         )
     )
 
-    return RunnableSequence(template, llm)
+    return RunnableSequence(template, llm_pipeline)

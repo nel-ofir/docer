@@ -1,29 +1,11 @@
-from transformers import pipeline, AutoModelForCausalLM, AutoTokenizer
-from langchain_huggingface import HuggingFacePipeline
 from langchain_core.prompts import PromptTemplate, FewShotPromptTemplate
 from langchain_core.runnables.base import RunnableSequence
+from langchain_huggingface import HuggingFacePipeline
 
 """
 Creates a runnable that extracts language/framework/purpose info from code.
 """
-def create_tech_extraction_chain():
-    model_id = "EleutherAI/pythia-2.8b"
-    tokenizer = AutoTokenizer.from_pretrained(model_id, trust_remote_code=True)
-    model = AutoModelForCausalLM.from_pretrained(
-        model_id,
-        device_map="auto",
-        trust_remote_code=True,
-        torch_dtype="float16"
-    )
-    hf_pipe = pipeline(
-        "text-generation",
-        model=model,
-        tokenizer=tokenizer,
-        max_new_tokens=256
-    )
-    
-    llm = HuggingFacePipeline(pipeline=hf_pipe)
-
+def create_tech_extraction_chain(llm_pipeline: HuggingFacePipeline):
     examples = [
         {
             "file_content": "```python\n# user_service.py\nfrom fastapi import APIRouter\n# ...\n```",
@@ -57,4 +39,4 @@ def create_tech_extraction_chain():
         example_separator="\n\n"
     )
 
-    return RunnableSequence(fewshot, llm)
+    return RunnableSequence(fewshot, llm_pipeline)

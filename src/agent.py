@@ -1,5 +1,7 @@
 import argparse
 import os
+
+from src.chains.model import get_huggingface_pipeline
 from src.utils.repo_scanner import scan_repo
 from src.chains.file_summary_chain import create_file_summary_chain
 from src.chains.tech_extraction_chain import create_tech_extraction_chain
@@ -21,10 +23,11 @@ def main():
         include_exts=args.include_exts,
         exclude_dirs=args.exclude_dirs
     )
-
-    file_chain = create_file_summary_chain()
-    tech_chain = create_tech_extraction_chain()
-    readme_chain = create_readme_generation_chain()
+    
+    llm_pipeline = get_huggingface_pipeline("EleutherAI/pythia-2.8b")
+    file_chain = create_file_summary_chain(llm_pipeline)
+    tech_chain = create_tech_extraction_chain(llm_pipeline)
+    readme_chain = create_readme_generation_chain(llm_pipeline)
 
     summaries = []
     technologies = []
